@@ -116,6 +116,7 @@ const ResetPasswordForm = () => {
                 onChange={handleChange}
                 placeholder="Min 8 chars, uppercase, lowercase, digit, special"
                 required
+                autoComplete="new-password"
               />
             </Form.Group>
 
@@ -128,6 +129,7 @@ const ResetPasswordForm = () => {
                 onChange={handleChange}
                 placeholder="Re-enter new password"
                 required
+                autoComplete="new-password"
               />
             </Form.Group>
 

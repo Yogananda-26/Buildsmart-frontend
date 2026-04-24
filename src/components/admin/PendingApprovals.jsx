@@ -22,6 +22,7 @@ const PendingApprovals = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalAction, setModalAction] = useState(null); // 'approve' or 'reject'
   const [selectedUser, setSelectedUser] = useState(null);
+  const [processingUserId, setProcessingUserId] = useState(null);
 
   useEffect(() => {
     fetchPendingUsers();
@@ -47,18 +48,52 @@ const PendingApprovals = () => {
   const handleConfirm = async () => {
     if (!selectedUser || !modalAction) return;
     try {
+      setProcessingUserId(selectedUser.userId);
+      // Backend expects these endpoint names (approve-user / reject-user)
       const endpoint = modalAction === 'approve'
-        ? `/admin/approve/${selectedUser.userId}`
-        : `/admin/reject/${selectedUser.userId}`;
-      await API.post(endpoint);
+        ? `/admin/approve-user/${selectedUser.userId}`
+        : `/admin/reject-user/${selectedUser.userId}`;
+      // Debug log: show what we're about to send to the backend
+      try {
+        console.debug('PendingApprovals -> calling endpoint', {
+          method: 'POST',
+          url: `${API.defaults.baseURL}${endpoint}`,
+          token: localStorage.getItem('token') || null,
+          userId: selectedUser.userId,
+          action: modalAction,
+        });
+      } catch (logErr) {
+        // ignore logging errors
+      }
+
+      // send an empty JSON body in case backend expects a JSON payload
+      const resp = await API.post(endpoint, {});
+      console.debug('PendingApprovals -> server response', resp && (resp.data || resp));
       toast.success(`User ${modalAction === 'approve' ? 'approved' : 'rejected'} successfully`);
       setUsers(users.filter(u => u.userId !== selectedUser.userId));
     } catch (err) {
-      toast.error(err.response?.data?.message || `Failed to ${modalAction} user`);
+      console.error('Pending approval action error:', err);
+      // Print response payload (if available) for debugging
+      if (err.response) {
+        console.error('Response status:', err.response.status);
+        console.error('Response headers:', err.response.headers);
+        console.error('Response data:', err.response.data);
+      }
+      // Provide clearer toast message with possible server hint
+      const status = err.response?.status;
+      const serverMsg = err.response?.data?.message || err.response?.data?.error || err.message;
+      if (status === 500) {
+        toast.error(`Server error (500): ${serverMsg || 'Check server logs for stack trace.'}`);
+      } else if (status) {
+        toast.error(`Request failed (${status}): ${serverMsg}`);
+      } else {
+        toast.error(`Request failed: ${serverMsg}`);
+      }
     } finally {
       setShowModal(false);
       setSelectedUser(null);
       setModalAction(null);
+      setProcessingUserId(null);
     }
   };
 
@@ -96,6 +131,7 @@ const PendingApprovals = () => {
                     size="sm"
                     className="me-1"
                     onClick={() => openModal(user, 'approve')}
+                    disabled={processingUserId === user.userId}
                   >
                     Approve
                   </Button>
@@ -103,6 +139,7 @@ const PendingApprovals = () => {
                     variant="danger"
                     size="sm"
                     onClick={() => openModal(user, 'reject')}
+                    disabled={processingUserId === user.userId}
                   >
                     Reject
                   </Button>
@@ -121,6 +158,8 @@ const PendingApprovals = () => {
         message={`Are you sure you want to ${modalAction} user "${selectedUser?.name}" (${selectedUser?.email})?`}
         confirmText={modalAction === 'approve' ? 'Approve' : 'Reject'}
         variant={modalAction === 'approve' ? 'success' : 'danger'}
+        confirmLoading={!!processingUserId}
+        confirmDisabled={!!processingUserId}
       />
     </>
   );

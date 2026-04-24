@@ -56,6 +56,7 @@ const ForgotPasswordForm = () => {
                 onChange={(e) => { setEmail(e.target.value); setError(''); }}
                 placeholder="Enter your registered email"
                 required
+                autoComplete="email"
               />
             </Form.Group>
 

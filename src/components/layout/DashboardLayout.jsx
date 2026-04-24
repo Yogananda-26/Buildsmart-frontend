@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Row, Col, Navbar, Button, Overlay, Popover } from 'react-bootstrap';
+import { Container, Navbar, Button, Overlay, Popover } from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import { FaSignOutAlt, FaUserCircle } from 'react-icons/fa';
 import ProfilePreview from '../profile/ProfilePreview';

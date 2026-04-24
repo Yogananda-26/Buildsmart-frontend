@@ -12,7 +12,7 @@ const Sidebar = () => {
   const items = [
     { key: 'dashboard', label: 'Dashboard', to: '/dashboard', icon: <FaTachometerAlt className="me-2" />, roles: ['ADMIN', 'PROJECT_MANAGER', 'SITE_ENGINEER', 'SAFETY_OFFICER', 'VENDOR', 'FINANCE_OFFICER', 'GUEST'] },
     { key: 'users', label: 'User Management', to: '/admin/users', icon: <FaUsers className="me-2" />, roles: ['ADMIN'] },
-    { key: 'pending', label: 'Pending Approvals', to: '/admin/pending', icon: <FaClipboardList className="me-2" />, roles: ['ADMIN', 'PROJECT_MANAGER'] },
+    { key: 'pending', label: 'Pending Approvals', to: '/admin/pending', icon: <FaClipboardList className="me-2" />, roles: ['ADMIN'] },
     { key: 'audit', label: 'Audit Logs', to: '/admin/audit', icon: <FaFileAlt className="me-2" />, roles: ['ADMIN'] },
   ];
 

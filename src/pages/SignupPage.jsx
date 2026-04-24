@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import SignupForm from '../components/auth/SignupForm';
-import Hero from '../assets/construction-illustration.svg';
 
 // Fallback photo URL (royalty-free Unsplash). Replace with a local image path if desired:
 const PHOTO_URL = 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80';

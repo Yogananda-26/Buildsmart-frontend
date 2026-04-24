@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Row, Col, Card, Table, Badge } from 'react-bootstrap';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import { useAuth } from '../context/AuthContext';
-import DashboardCard from '../components/dashboard/DashboardCard';
+// DashboardCard removed from this view (not used here)
 import API from '../api/axiosInstance';
+import { toast } from 'react-toastify';
 
 const ROLE_DESCRIPTIONS = {
   ADMIN: 'Full system access. Manage users, view audit logs, and oversee all operations.',
@@ -17,12 +18,56 @@ const ROLE_DESCRIPTIONS = {
 const DashboardPage = () => {
   const { user, hasRole, logout } = useAuth();
   const [pendingCount, setPendingCount] = useState(0);
+  const [recentActivities, setRecentActivities] = useState([]);
+  const [activitiesLoading, setActivitiesLoading] = useState(false);
+
+  const fetchRecentActivities = useCallback(async () => {
+    setActivitiesLoading(true);
+    try {
+      if (hasRole('ADMIN')) {
+        // fetch latest audit logs for admin
+        const resp = await API.get('/admin/audit/logs?page=0&size=5&sortBy=timestamp&sortDir=desc');
+        const data = resp.data.data || resp.data || [];
+        const logs = data.content ? data.content : (Array.isArray(data) ? data : []);
+        const items = logs.slice(0,5).map(l => ({
+          time: l.timestamp ? new Date(l.timestamp).toLocaleTimeString() : '-',
+          activity: l.action?.replace(/_/g, ' ') + (l.details ? `: ${l.details}` : ''),
+          user: l.userId || l.user || '-',
+        }));
+        setRecentActivities(items);
+      } else {
+        // try to fetch user-specific actions; fallback to local sample if endpoint not available
+        try {
+          const uid = user?.userId || user?.id || user?.username;
+          const resp = await API.get(`/users/${uid}/activities?size=5`);
+          const data = resp.data.data || resp.data || [];
+          const items = (Array.isArray(data) ? data : []).slice(0,5).map(a => ({
+            time: a.timestamp ? new Date(a.timestamp).toLocaleTimeString() : '-',
+            activity: a.action || a.details || 'Performed action',
+            user: user?.username || user?.name || uid,
+          }));
+          setRecentActivities(items);
+        } catch (innerErr) {
+          // fallback: show sample actions for the current user
+          setRecentActivities([
+            { time: new Date().toLocaleTimeString(), activity: 'Updated profile', user: user?.username || user?.name },
+            { time: new Date(Date.now()-3600*1000).toLocaleTimeString(), activity: 'Logged in', user: user?.username || user?.name },
+          ]);
+        }
+      }
+    } catch (err) {
+      toast.error('Failed to load recent activity');
+    } finally {
+      setActivitiesLoading(false);
+    }
+  }, [hasRole, user]);
 
   useEffect(() => {
     if (hasRole('ADMIN')) {
       fetchPendingCount();
     }
-  }, [hasRole]);
+    fetchRecentActivities();
+  }, [hasRole, fetchRecentActivities]);
 
   const fetchPendingCount = async () => {
     try {
@@ -33,6 +78,7 @@ const DashboardPage = () => {
       // silently fail
     }
   };
+
 
   return (
     <DashboardLayout title="Dashboard" onLogout={logout}>
@@ -87,17 +133,7 @@ const DashboardPage = () => {
           </Card>
         </Col>
 
-        <Col md={6} lg={3}>
-          <Card className="stat-card shadow-sm h-100">
-            <Card.Body className="d-flex align-items-center">
-              <div className="me-3 display-6 text-muted">📈</div>
-              <div>
-                <div className="text-muted small">Site Visits</div>
-                <div className="h5 mb-0">8.2k</div>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
+        {/* Site Visits card removed as requested */}
       </Row>
 
       <Row>
@@ -134,16 +170,21 @@ const DashboardPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>10:42</td>
-                    <td>Approved permit #123</td>
-                    <td>jamie</td>
-                  </tr>
-                  <tr>
-                    <td>09:30</td>
-                    <td>New user sign up</td>
-                    <td>linda</td>
-                  </tr>
+                  {activitiesLoading ? (
+                    <tr><td colSpan="3" className="text-center text-muted py-3">Loading...</td></tr>
+                  ) : (
+                    recentActivities.length === 0 ? (
+                      <tr><td colSpan="3" className="text-center text-muted py-3">No recent activity</td></tr>
+                    ) : (
+                      recentActivities.map((act, idx) => (
+                        <tr key={idx}>
+                          <td>{act.time}</td>
+                          <td className="text-truncate truncate-max-250">{act.activity}</td>
+                          <td>{act.user}</td>
+                        </tr>
+                      ))
+                    )
+                  )}
                 </tbody>
               </Table>
             </Card.Body>

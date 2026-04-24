@@ -60,6 +60,7 @@ const LoginForm = ({ noWrapper = false, onSwitch }) => {
             onChange={handleChange}
             placeholder="Enter email"
             required
+            autoComplete="email"
           />
         </Form.Group>
 
@@ -72,6 +73,7 @@ const LoginForm = ({ noWrapper = false, onSwitch }) => {
             onChange={handleChange}
             placeholder="Enter password"
             required
+            autoComplete="current-password"
           />
         </Form.Group>
 

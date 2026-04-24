@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import LoginForm from '../components/auth/LoginForm';
-import Hero from '../assets/construction-illustration.svg';
 
 // Fallback photo URL (royalty-free Unsplash). Replace with a local image path if desired:
-const PHOTO_URL = 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80';
+const PHOTO_URL = 'https://www.google.com/imgres?q=construction%20image&imgurl=https%3A%2F%2Fimg.freepik.com%2Ffree-photo%2Fconstruction-site-sunset_23-2152006125.jpg%3Fsemt%3Dais_hybrid%26w%3D740%26q%3D80&imgrefurl=https%3A%2F%2Fwww.freepik.com%2Ffree-photos-vectors%2Fconstruction-engineering&docid=p7Bij0eNS1fI5M&tbnid=DxDYuElZ5U56vM&vet=12ahUKEwjhv_7yk4GUAxWqV3ADHWdZFRwQnPAOegQIExAB..i&w=740&h=404&hcb=2&ved=2ahUKEwjhv_7yk4GUAxWqV3ADHWdZFRwQnPAOegQIExAB';
 
 const LoginPage = () => {
   const [visible, setVisible] = useState(false);
