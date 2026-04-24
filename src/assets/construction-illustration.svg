@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <linearGradient id="g1" x1="0" x2="1">
+      <stop offset="0" stop-color="#e6f0ff"/>
+      <stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#g1)"/>
+
+  <!-- Simple building blocks -->
+  <g transform="translate(120,140)">
+    <rect x="0" y="120" width="120" height="160" rx="8" fill="#cfe3ff" stroke="#b2d1ff"/>
+    <rect x="140" y="80" width="120" height="200" rx="8" fill="#bfe0d3" stroke="#9fd1bf"/>
+    <rect x="280" y="40" width="120" height="240" rx="8" fill="#ffd9c2" stroke="#ffc6a6"/>
+
+    <!-- windows -->
+    <g fill="#ffffff" opacity="0.9">
+      <rect x="16" y="140" width="32" height="32" rx="4"/>
+      <rect x="64" y="140" width="32" height="32" rx="4"/>
+      <rect x="16" y="188" width="32" height="32" rx="4"/>
+      <rect x="64" y="188" width="32" height="32" rx="4"/>
+
+      <rect x="156" y="100" width="32" height="32" rx="4"/>
+      <rect x="204" y="100" width="32" height="32" rx="4"/>
+      <rect x="156" y="148" width="32" height="32" rx="4"/>
+      <rect x="204" y="148" width="32" height="32" rx="4"/>
+
+      <rect x="296" y="60" width="32" height="32" rx="4"/>
+      <rect x="344" y="60" width="32" height="32" rx="4"/>
+      <rect x="296" y="108" width="32" height="32" rx="4"/>
+      <rect x="344" y="108" width="32" height="32" rx="4"/>
+    </g>
+  </g>
+
+  <!-- Crane arm -->
+  <g transform="translate(460,30)">
+    <rect x="0" y="0" width="12" height="300" fill="#2d4a7a" rx="6"/>
+    <rect x="-160" y="40" width="220" height="12" fill="#2d4a7a" rx="6"/>
+    <rect x="-60" y="36" width="8" height="40" fill="#ffb74d" rx="4"/>
+    <circle cx="-60" cy="84" r="10" fill="#ffb74d"/>
+  </g>
+
+  <!-- Ground / base -->
+  <rect x="0" y="320" width="800" height="80" fill="#f0f4f9"/>
+
+  <!-- Small hardhat icon -->
+  <g transform="translate(560,380)">
+    <ellipse cx="0" cy="0" rx="40" ry="18" fill="#ffb74d"/>
+    <path d="M -40 0 q 40 -40 80 0" fill="#ffb74d"/>
+    <rect x="-20" y="0" width="40" height="12" rx="6" fill="#d98b2f"/>
+  </g>
+
+</svg>
