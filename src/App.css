@@ -48,6 +48,14 @@ code { color: var(--primary); background-color: #e8ecf1; padding: 2px 6px; borde
   font-size: 1.25rem;
 }
 
+/* KPI Card specific */
+.kpi-card { border-radius: 12px; }
+.kpi-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.05rem }
+.kpi-label { font-size: 0.85rem; color: #374151; font-weight:600 }
+.kpi-value { font-size: 1.25rem; font-weight:700; color: #0f1724 }
+.kpi-change { font-size: 0.8rem; color: #6b7280 }
+.kpi-sparkline { height:44px }
+
 .table-header { background-color: var(--primary); color: #fff; }
 
 .filters { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem; }
@@ -227,6 +235,12 @@ code { color: var(--primary); background-color: #e8ecf1; padding: 2px 6px; borde
 }
 .auth-portal-container { position: relative; z-index: 2; min-height: 100vh; }
 
+/* When on auth pages hide global navbars to avoid duplicates during transitions */
+body.auth-page .app-navbar,
+body.auth-page .top-navbar {
+  display: none !important;
+}
+
 .glass-card {
   width: 100%; max-width: 760px; border-radius: 20px;
   background: rgba(255,255,255,0.22); border: 1px solid rgba(255,255,255,0.6);
@@ -284,4 +298,78 @@ code { color: var(--primary); background-color: #e8ecf1; padding: 2px 6px; borde
   .hero-heading { font-size: 1.6rem; }
   .hero-sub { font-size: 0.95rem; }
   .btn-join.btn-xl { padding: 12px 30px; font-size: 1rem; }
+}
+
+/* Landing Page Sections */
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.section-subtitle {
+  font-size: 1.2rem;
+  color: var(--muted-text);
+  margin-bottom: 3rem;
+}
+
+.clients-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.client-logo {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.features-section {
+  background: #fff;
+}
+
+.feature-card {
+  border: none;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.feature-icon {
+  color: var(--accent);
+}
+
+.help-about-section {
+  background: linear-gradient(135deg, #1a365d 0%, #2d3748 100%);
+  color: #fff;
+}
+
+.help-card, .about-card {
+  border: none;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  color: #fff;
+}
+
+.help-card .card-title, .about-card .card-title {
+  color: #fff;
+}
+
+.help-card .card-text, .about-card .card-text {
+  color: rgba(255,255,255,0.9);
+}
+
+.footer {
+  margin-top: 3rem;
+}
+
+.footer a {
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
 }

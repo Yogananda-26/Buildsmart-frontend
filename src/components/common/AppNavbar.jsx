@@ -58,8 +58,8 @@ const AppNavbar = () => {
     navigate('/login');
   };
 
-  // Hide the global top navbar on dashboard/admin/profile routes
-  const hideOnPaths = ['/dashboard', '/admin', '/profile'];
+  // Hide the global top navbar on dashboard/admin/profile/analytics/login routes
+  const hideOnPaths = ['/dashboard', '/admin', '/profile', '/analytics', '/login'];
   if (!isAuthenticated) return null;
   if (hideOnPaths.some(p => location.pathname.startsWith(p))) return null;
 

@@ -1,29 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Badge, Button, Form, InputGroup } from 'react-bootstrap';
+import { Table, Button, Form, InputGroup, Spinner } from 'react-bootstrap';
 import { toast } from 'react-toastify';
+import { FiSearch, FiEdit2, FiTrash2, FiFilter } from 'react-icons/fi';
 import API from '../../api/axiosInstance';
-import LoadingSpinner from '../common/LoadingSpinner';
 import ConfirmModal from '../common/ConfirmModal';
 import UserEditModal from './UserEditModal';
 
-const STATUS_COLORS = {
-  ACTIVE: 'success',
-  INACTIVE: 'secondary',
-  SUSPENDED: 'danger',
-  PENDING_VERIFICATION: 'warning',
-};
-
 const ROLE_COLORS = {
-  ADMIN: 'danger',
-  PROJECT_MANAGER: 'primary',
-  SITE_ENGINEER: 'success',
-  SAFETY_OFFICER: 'warning',
-  VENDOR: 'info',
-  FINANCE_OFFICER: 'secondary',
+  ADMIN: '#F06222',
+  PROJECT_MANAGER: '#3B82F6',
+  SITE_ENGINEER: '#22C55E',
+  SAFETY_OFFICER: '#F59E0B',
+  VENDOR: '#A855F7',
+  FINANCE_OFFICER: '#14B8A6'
 };
-
-const formatRole = (role) => role ? role.replace(/_/g, ' ') : '';
-const formatStatus = (status) => status ? status.replace(/_/g, ' ') : '';
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
@@ -31,13 +21,9 @@ const UserTable = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
 
-  // Delete modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
-
-  // Edit modal
   const [showEditModal, setShowEditModal] = useState(false);
   const [userToEdit, setUserToEdit] = useState(null);
 
@@ -46,43 +32,43 @@ const UserTable = () => {
   }, []);
 
   useEffect(() => {
-    let filtered = users;
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(u =>
-        u.name?.toLowerCase().includes(term) ||
-        u.email?.toLowerCase().includes(term) ||
-        u.userId?.toLowerCase().includes(term)
-      );
-    }
-    if (roleFilter) {
-      filtered = filtered.filter(u => u.role === roleFilter);
-    }
-    if (statusFilter) {
-      filtered = filtered.filter(u => u.status === statusFilter);
-    }
+    if (!Array.isArray(users)) return;
+    
+    let filtered = users.filter(u => {
+      const matchesSearch = !searchTerm || 
+        u.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        u.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        u.userId?.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesRole = !roleFilter || u.role === roleFilter;
+      
+      return matchesSearch && matchesRole;
+    });
     setFilteredUsers(filtered);
-  }, [users, searchTerm, roleFilter, statusFilter]);
+  }, [users, searchTerm, roleFilter]);
 
   const fetchUsers = async () => {
     try {
+      setLoading(true);
       const response = await API.get('/admin/users');
-      setUsers(response.data.data || response.data || []);
+      // Mapping to response.data.data based on your provided JSON
+      const data = response.data.data || [];
+      setUsers(data);
     } catch (err) {
-      toast.error('Failed to load users');
+      console.error("API Error:", err);
+      toast.error('Connection failed: Could not load user directory');
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!userToDelete) return;
     try {
       await API.delete(`/admin/users/${userToDelete.userId}`);
-      toast.success('User deleted successfully');
+      toast.success('Access revoked successfully');
       setUsers(users.filter(u => u.userId !== userToDelete.userId));
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to delete user');
+      toast.error('Action failed: Record is protected or server error');
     } finally {
       setShowDeleteModal(false);
       setUserToDelete(null);
@@ -94,80 +80,93 @@ const UserTable = () => {
       const response = await API.put(`/admin/users/${userToEdit.userId}`, updatedData);
       const updated = response.data.data || response.data;
       setUsers(users.map(u => u.userId === userToEdit.userId ? updated : u));
-      toast.success('User updated successfully');
+      toast.success('Permissions updated');
       setShowEditModal(false);
-      setUserToEdit(null);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to update user');
+      toast.error('Update failed');
     }
   };
 
-  if (loading) return <LoadingSpinner message="Loading users..." />;
+  if (loading) return (
+    <div className="text-center py-5">
+      <Spinner animation="border" variant="primary" size="sm" className="me-2" />
+      <span className="text-muted small fw-bold">Synchronizing Personnel Records...</span>
+    </div>
+  );
 
   return (
     <>
-      {/* Filters */}
-      <div className="filters">
-        <InputGroup className="filter-input">
+      {/* Search & Filter Toolbar */}
+      <div className="p-4 bg-light border-bottom d-flex flex-wrap gap-3">
+        <InputGroup className="shadow-sm" style={{ maxWidth: '350px' }}>
+          <InputGroup.Text className="bg-white border-end-0 text-muted">
+            <FiSearch />
+          </InputGroup.Text>
           <Form.Control
-            placeholder="Search by name, email, or ID..."
+            className="border-start-0 ps-0"
+            placeholder="Search by name, ID, or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </InputGroup>
-        <Form.Select className="filter-select" value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
-          <option value="">All Roles</option>
+
+        <Form.Select 
+          className="shadow-sm border-0" 
+          style={{ maxWidth: '200px', fontSize: '0.9rem' }}
+          value={roleFilter}
+          onChange={(e) => setRoleFilter(e.target.value)}
+        >
+          <option value="">Search By Role</option>
           {Object.keys(ROLE_COLORS).map(r => (
-            <option key={r} value={r}>{formatRole(r)}</option>
-          ))}
-        </Form.Select>
-        <Form.Select className="filter-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-          <option value="">All Statuses</option>
-          {Object.keys(STATUS_COLORS).map(s => (
-            <option key={s} value={s}>{formatStatus(s)}</option>
+            <option key={r} value={r}>{r.replace(/_/g, ' ')}</option>
           ))}
         </Form.Select>
       </div>
 
-      <Table responsive hover className="align-middle">
-        <thead className="table-header">
-          <tr>
-            <th>User ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Actions</th>
+      <Table responsive hover className="mb-0">
+        <thead className="bg-light">
+          <tr style={{ fontSize: '0.75rem', color: '#64748B' }}>
+            <th className="ps-4 border-0">USER ID</th>
+            <th className="border-0">PERSONNEL DETAILS</th>
+            <th className="border-0">CONTACT</th>
+            <th className="border-0">ROLE</th>
+            <th className="border-0 text-center">SYSTEM STATUS</th>
+            <th className="border-0 text-end pe-4">ACTIONS</th>
           </tr>
         </thead>
         <tbody>
           {filteredUsers.length === 0 ? (
-            <tr><td colSpan="7" className="text-center text-muted py-4">No users found</td></tr>
+            <tr><td colSpan="6" className="text-center py-5 text-muted">No matching personnel found in database</td></tr>
           ) : (
             filteredUsers.map((user) => (
-              <tr key={user.userId}>
-                <td><code>{user.userId}</code></td>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
-                <td>{user.phone}</td>
-                <td><Badge bg={ROLE_COLORS[user.role]}>{formatRole(user.role)}</Badge></td>
-                <td><Badge bg={STATUS_COLORS[user.status]}>{formatStatus(user.status)}</Badge></td>
+              <tr key={user.userId} className="align-middle">
+                <td className="ps-4 font-monospace small">{user.userId}</td>
                 <td>
-                  <Button
-                    variant="outline-primary"
-                    size="sm"
-                    className="me-1"
-                    onClick={() => { setUserToEdit(user); setShowEditModal(true); }}
-                  >
-                    Edit
+                  <div className="fw-bold text-dark">{user.name}</div>
+                  <div className="text-muted small" style={{ fontSize: '0.7rem' }}>{user.email}</div>
+                </td>
+                <td className="small">{user.phone}</td>
+                <td>
+                  <span className="badge rounded-pill" style={{ 
+                    background: ROLE_COLORS[user.role] + '15', color: ROLE_COLORS[user.role],
+                    border: `1px solid ${ROLE_COLORS[user.role]}30`, fontSize: '0.65rem'
+                  }}>
+                    {user.role?.replace(/_/g, ' ')}
+                  </span>
+                </td>
+                <td className="text-center">
+                  <div style={{
+                    background: '#22C55E15', color: '#22C55E', border: '1px solid #22C55E30',
+                    padding: '4px 12px', borderRadius: '50px', fontSize: '0.65rem',
+                    fontWeight: '700', display: 'inline-flex'
+                  }}>{user.status || 'ACTIVE'}</div>
+                </td>
+                <td className="text-end pe-4">
+                  <Button variant="link" className="text-primary p-1 me-2" onClick={() => { setUserToEdit(user); setShowEditModal(true); }}>
+                    <FiEdit2 size={16} />
                   </Button>
-                  <Button
-                    variant="outline-danger"
-                    size="sm"
-                    onClick={() => { setUserToDelete(user); setShowDeleteModal(true); }}
-                  >
-                    Delete
+                  <Button variant="link" className="text-danger p-1" onClick={() => { setUserToDelete(user); setShowDeleteModal(true); }}>
+                    <FiTrash2 size={16} />
                   </Button>
                 </td>
               </tr>
@@ -178,17 +177,17 @@ const UserTable = () => {
 
       <ConfirmModal
         show={showDeleteModal}
-        onHide={() => { setShowDeleteModal(false); setUserToDelete(null); }}
+        onHide={() => setShowDeleteModal(false)}
         onConfirm={handleDelete}
-        title="Delete User"
-        message={`Are you sure you want to delete user "${userToDelete?.name}" (${userToDelete?.userId})? This action cannot be undone.`}
-        confirmText="Delete"
+        title="Revoke Access"
+        message={`Are you sure you want to permanently delete user "${userToDelete?.name}"?`}
+        confirmText="Revoke Access"
         variant="danger"
       />
 
       <UserEditModal
         show={showEditModal}
-        onHide={() => { setShowEditModal(false); setUserToEdit(null); }}
+        onHide={() => setShowEditModal(false)}
         user={userToEdit}
         onSave={handleEditSave}
       />

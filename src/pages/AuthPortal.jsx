@@ -15,6 +15,12 @@ const AuthPortal = ({ initial = 'signin' }) => {
     return () => clearTimeout(t);
   }, [mode]);
 
+  // Add a body class while auth portal is visible so global navbars can hide via CSS
+  useEffect(() => {
+    document.body.classList.add('auth-page');
+    return () => { document.body.classList.remove('auth-page'); };
+  }, []);
+
   // Keep internal mode synced with route/initial prop when navigation occurs
   useEffect(() => {
     setMode(initial === 'signup' ? 'signup' : 'signin');

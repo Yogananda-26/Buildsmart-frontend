@@ -1,7 +1,7 @@
 import React from 'react';
 import { Nav } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
-import { FaTachometerAlt, FaUsers, FaClipboardList, FaFileAlt } from 'react-icons/fa';
+import { FaTachometerAlt, FaUsers, FaClipboardList, FaFileAlt, FaChartBar, FaProjectDiagram, FaTools, FaShieldAlt, FaUserTie } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 
 const Sidebar = () => {
@@ -11,7 +11,13 @@ const Sidebar = () => {
   // Sidebar items with RBAC rules
   const items = [
     { key: 'dashboard', label: 'Dashboard', to: '/dashboard', icon: <FaTachometerAlt className="me-2" />, roles: ['ADMIN', 'PROJECT_MANAGER', 'SITE_ENGINEER', 'SAFETY_OFFICER', 'VENDOR', 'FINANCE_OFFICER', 'GUEST'] },
-    { key: 'users', label: 'User Management', to: '/admin/users', icon: <FaUsers className="me-2" />, roles: ['ADMIN'] },
+    { key: 'finance', label: 'Finance', to: '/analytics/finance', icon: <FaProjectDiagram className="me-2" />, roles: ['ADMIN', 'PROJECT_MANAGER', 'FINANCE_OFFICER'] },
+    { key: 'projects', label: 'Projects', to: '/analytics/projects', icon: <FaTools className="me-2" />, roles: ['ADMIN', 'PROJECT_MANAGER'] },
+    { key: 'resources', label: 'Resources', to: '/analytics/resources', icon: <FaUserTie className="me-2" />, roles: ['ADMIN', 'PROJECT_MANAGER'] },
+    { key: 'safety', label: 'Safety', to: '/analytics/safety', icon: <FaShieldAlt className="me-2" />, roles: ['ADMIN', 'PROJECT_MANAGER', 'SAFETY_OFFICER'] },
+    { key: 'vendors', label: 'Vendors', to: '/analytics/vendors', icon: <FaUsers className="me-2" />, roles: ['ADMIN', 'PROJECT_MANAGER', 'VENDOR'] },
+    { key: 'users', label: 'User Analytics', to: '/analytics/users', icon: <FaUsers className="me-2" />, roles: ['ADMIN', 'PROJECT_MANAGER'] },
+    { key: 'users_admin', label: 'User Management', to: '/admin/users', icon: <FaUsers className="me-2" />, roles: ['ADMIN'] },
     { key: 'pending', label: 'Pending Approvals', to: '/admin/pending', icon: <FaClipboardList className="me-2" />, roles: ['ADMIN'] },
     { key: 'audit', label: 'Audit Logs', to: '/admin/audit', icon: <FaFileAlt className="me-2" />, roles: ['ADMIN'] },
   ];

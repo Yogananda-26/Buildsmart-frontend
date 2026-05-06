@@ -1,0 +1,60 @@
+/* Copied from analytics frontend index.css (scoped for analytics pages) */
+:root {
+  --bs-primary:       #F06222;
+  --bs-primary-rgb:   240, 98, 34;
+  --bs-body-bg:       #F8F9FB;
+  --bs-body-font-family: 'Inter', sans-serif;
+  --navy: #1A2130;
+  --orange: #F06222;
+  --muted: #64748B;
+  --sidebar-w: 240px;
+  --sidebar-w-collapsed: 68px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif !important; background: #F8F9FB !important; margin: 0; }
+a { text-decoration: none; }
+img, svg { max-width: 100%; }
+
+.btn-primary { background-color: #F06222 !important; border-color: #F06222 !important; }
+.btn-primary:hover, .btn-primary:focus { background-color: #D4541A !important; border-color: #D4541A !important; }
+.btn-outline-primary { color: #F06222 !important; border-color: #F06222 !important; }
+.btn-outline-primary:hover { background-color: #F06222 !important; color: #fff !important; }
+.text-primary { color: #F06222 !important; }
+.bg-primary  { background-color: #F06222 !important; }
+.border-primary { border-color: #F06222 !important; }
+.badge.bg-primary { background-color: #F06222 !important; }
+.form-control:focus, .form-select:focus {
+  border-color: #F06222 !important;
+  box-shadow: 0 0 0 0.2rem rgba(240,98,34,.18) !important;
+}
+
+.card { border: none !important; border-radius: 12px !important; box-shadow: 0 2px 12px rgba(0,0,0,.07) !important; margin-bottom: 0; }
+.card-header { background: transparent !important; border-bottom: 1px solid #F1F5F9 !important; padding: 14px 18px !important; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.card-body { padding: 18px !important; }
+.card-title { font-size: 14px; font-weight: 700; color: #1E293B; margin: 0; }
+.card-subtitle { font-size: 12px; color: #64748B; margin-top: 2px; }
+
+.kpi-card { position: relative; overflow: hidden; }
+.kpi-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; position: absolute; top: 14px; right: 14px; flex-shrink: 0; }
+.kpi-label { font-size: 11px; font-weight: 600; color: #64748B; text-transform: uppercase; letter-spacing: .05em; }
+.kpi-value { font-size: 26px; font-weight: 800; color: #1E293B; margin: 5px 0 3px; line-height: 1.1; }
+.kpi-change { font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+.kpi-sparkline { margin-top: 12px; }
+
+.loading-center { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 48px 16px; color: #64748B; }
+.spinner-border { color: #F06222 !important; }
+
+.card-hover { transition: box-shadow .15s, transform .12s; }
+.card-hover:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
+
+.page-header { margin-bottom: 24px; }
+.page-header h1 { font-size: clamp(18px, 3vw, 26px); font-weight: 800; color: #1E293B; margin: 0 0 4px; }
+.page-header p { color: #64748B; font-size: 13px; margin: 0; }
+
+/* some table tweaks used by analytics */
+.table { font-size: 13px; }
+.table th { font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: .05em; border-bottom-width: 2px !important; padding: 10px 12px !important; white-space: nowrap; }
+.table td { padding: 12px 12px !important; vertical-align: middle; }
+
+/* responsive adjustments omitted for brevity */

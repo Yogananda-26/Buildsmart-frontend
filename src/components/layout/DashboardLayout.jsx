@@ -12,7 +12,7 @@ const DashboardLayout = ({ title = 'Dashboard', children, onLogout }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [showProfile, setShowProfile] = useState(false);
   const profileTarget = useRef(null);
   const hideTimer = useRef(null);
@@ -40,8 +40,15 @@ const DashboardLayout = ({ title = 'Dashboard', children, onLogout }) => {
   };
 
   const handleLogout = async () => {
-    if (onLogout) await onLogout();
-    navigate('/login');
+    try {
+      if (onLogout) await onLogout();
+      // Always call central logout to clear auth state and tokens
+      if (logout) await logout();
+    } catch (e) {
+      // ignore
+    } finally {
+      navigate('/login');
+    }
   };
 
   // Close sidebar when route changes (desktop & mobile)
@@ -75,8 +82,9 @@ const DashboardLayout = ({ title = 'Dashboard', children, onLogout }) => {
       />
 
       <div className="main-content flex-grow-1">
-        <Navbar bg="light" className="top-navbar px-3" expand={false}>
-          <div className="d-flex align-items-center w-100">
+        {user && !location.pathname.startsWith('/login') && (
+          <Navbar bg="light" className="top-navbar px-3" expand={false}>
+            <div className="d-flex align-items-center w-100">
             <div className="d-flex align-items-center">
               <Button
                 variant="link"
@@ -115,8 +123,9 @@ const DashboardLayout = ({ title = 'Dashboard', children, onLogout }) => {
                 <FaSignOutAlt className="me-1" /> Logout
               </Button>
             </div>
-          </div>
-        </Navbar>
+            </div>
+          </Navbar>
+        )}
 
         <Container fluid className="p-3">
           {children}
